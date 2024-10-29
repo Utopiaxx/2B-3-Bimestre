@@ -81,9 +81,8 @@ class ChefeDepartamento(Pessoa):
   def exibirChefeDepartamento(self):
     print("\nNome:" + self.nome + "\nCPF: " + str(self.cpf) + '\nIdade:' + str(self.idade) + '\nDepartamento: ' + self.departamento)
 
-class Alvo(ABC):
+class Feedback(ABC):
   def __init__ (self, nota, feedback):
-
     self.nota = nota
     self.feedback = feedback
     def get_nota(self):
@@ -93,15 +92,19 @@ class Alvo(ABC):
     def get_feedback(self):
             return self.feedback
     def set_feedback(self, feedback):
-            self.feedback =  feedback
+            self.feedback = feedback
+    def get_pessoa(self):
+            return self.pessoa
+    def set_pessoa(self, pessoa):
+            self.pessoa = pessoa
 
-  def  __str__(self):+ "," + self.feedback
+  def  __str__(self):+ "," + self.feedback+self.pessoa.nome
 
-  def exibirAlvo(self):
-    print ("\nTipo de review:" + self.tipo + "\nNota (de 1 a 10): " + str(self.nota) + '\nFeedback: ' + self.feedback)
+  def exibirFeedback(self):
+    print ("\nNome:" + self.nomePessoa + "\nTipo de review:" + self.tipo + "\nNota (de 1 a 10): " + str(self.nota) + '\nFeedback: ' + self.feedback)
 
-class Local(Alvo):
-  def __init__ (self, nota, feedback, local):
+class FeedbackLocal(Feedback):
+  def __init__ (self, nota, feedback, local, usuario_logado):
     super().__init__(nota, feedback)
     self.local = local
     def get_local(self):
@@ -113,10 +116,10 @@ class Local(Alvo):
     return super().__str__() + "," + self.local
 
   def exibirLocal(self):
-      print ("\nTipo de review: " + self.tipo + "\n\nAlvo da review: " + self.local + "\nNota (de 1 a 10): " + str(self.nota) + '\nFeedback: ' + self.feedback)
+      print ("\nNome:" + self.usuario_logado + "\nTipo de review: " + self.tipo + "\n\nAlvo da review: " + self.local + "\nNota (de 1 a 10): " + str(self.nota) + '\nFeedback: ' + self.feedback)
 
-class Departamento(Alvo):
-  def __init__ (self, nota, feedback, departamento):
+class FeedbackDepartamento(Feedback):
+  def __init__ (self, nota, feedback, departamento, usuario_logado):
     super().__init__(nota, feedback)
     self.departamento = departamento
     def get_departamento(self):
@@ -128,4 +131,4 @@ class Departamento(Alvo):
     return super().__str__() + "," + self.departamento
 
   def exibirDepartamento(self):
-    print ("\nTipo de review: " + self.tipo + "\n\nAlvo da review: " + self.departamento + "\nNota (de 1 a 10): " + str(self.nota) + '\nFeedback: ' + self.feedback)
+    print ("\nNome:" + self.usuario_logado + "\nTipo de review: " + self.tipo + "\n\nAlvo da review: " + self.departamento + "\nNota (de 1 a 10): " + str(self.nota) + '\nFeedback: ' + self.feedback)
