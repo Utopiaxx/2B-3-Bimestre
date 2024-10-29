@@ -36,7 +36,7 @@ def registrar_usuario():
 
     print("\nUsuário registrado com sucesso.")
 
-def fazer_feedback():
+def fazer_feedback(usuario_logado):
     nota = None
     feedback = None
     tipo = input("Tipo de review:\n\n1 - Lugar\n2 - Departamento\nEscolha o seu tipo de feedback: ").strip().upper()
@@ -45,18 +45,15 @@ def fazer_feedback():
         nota = input("Digite a nota: ").strip()
         feedback = input("Redija sua crítica: ").strip()
 
-
-
-
     if tipo == '1':
         local = input("Digite o local: ").strip()
         feedback2()
-        review = Local(nota, feedback, local)
+        review = FeedbackLocal(nota, feedback, local, usuario_logado)
         reviews.append(review)
     elif tipo == '2':
         departamento = input("Digite o departamento: ").strip()
         feedback2()
-        review = Departamento(nota, feedback, departamento)
+        review = FeedbackDepartamento(nota, feedback, departamento, usuario_logado)
         reviews.append(review)
     else:
         print("Tipo de review inválido.")
@@ -64,6 +61,7 @@ def fazer_feedback():
 
     print("\nFeedback registrado com sucesso.")
 
+loginFeito = None
 def fazer_login():
   print("\nFazer login \n")
   cpf = input("\nDigite seu CPF: ").strip()
@@ -72,18 +70,21 @@ def fazer_login():
 
   for usuario in usuarios:
       if usuario.cpf == cpf and usuario.senha == senha:
+          global loginFeito 
+          loginFeito = True
           return usuario
       else:
           print("\nCPF ou senha incorretos.\n")
 
-1
+
 def menu():
   while True:
       print("Sistema de Feedback\n")
       print("1 - Cadastrar")
       print("2 - Fazer login")
       print("3 - Feedback")
-      print("4 - Sair")
+      print("4 - Ver feedbacks")
+      print("5 - Sair")
       opcao = input("\nEscolha uma opção: ").strip()
 
       if opcao == '1':
@@ -93,13 +94,20 @@ def menu():
           if usuario_logado:
               print(f"\nBem-vindo, {usuario_logado.nome}!\n")
       elif opcao == '3':
-        fazer_feedback()           
+        if loginFeito == True:
+            print("True")
+            fazer_feedback(usuario_logado)
+        else:
+            print("Você precisa estar logado para fazer um feedback.")
       elif opcao == '4':
+        print(usuarios)     
+      elif opcao == '5':
           print("\nSaindo...")
           break
       else:
           print("Opção inválida.")
 
   
-
+global usuario_logado
+usuario_logado = None
 menu()
