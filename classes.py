@@ -1,143 +1,129 @@
-from abc import ABC, abstractmethod
-class Pessoa(ABC):
-  def __init__ (self, nome, cpf, idade, senha):
-    self.nome = nome
-    self.cpf = cpf
-    self.idade = idade 
-    self.senha = senha   
-    def get_nome(self):
-            return self.nome
-    def set_nome(self, nome):
-            self.nome =  nome
-    def get_cpf(self):
-            return self.cpf
-    def set_cpf(self, cpf):
-            self.cpf =  cpf
-    def get_idade(self):
-            return self.idade
-    def set_idade(self, idade):
-            self.idade =  idade
-    def get_senha(self):
-            return self.senha
-    def set_senha(self, senha):
-            self.senha =  senha
+#miguel andrade
+#informatica 2 V
 
-  def  __str__(self):
-    return self.nome + "" + self.cpf + "," + str(self.idade)
+def registrar_usuario():
+    try:
+        tipo = input("Tipo de usuário:\n\n1 - Aluno\n2 - Visitante\n3 - Chefe De Departamento\nEscolha o seu tipo de usuário: ").strip()
+        print("\nRegistrar informações\n")
+        nome = input("Digite seu nome completo: ").strip()
+        cpf = input("Digite seu CPF: ").strip()
+        idade = input("Digite sua Idade: ").strip()
+        senha = input("Digite sua senha: ").strip()
 
-  def exibirPessoa(self):
-    print ("nome:" + self.nome + "\nCPF: " +self.cpf + '\nIdade:' + str(self.idade) )
+        if any(usuario.cpf == cpf for usuario in usuarios):
+            raise UsuarioJaCadastradoError("Erro: Pessoa já cadastrada.")
 
+        if tipo == '1':
+            matricula = input("Digite sua matrícula: ").strip()
+            curso = input("Digite seu curso: ").strip()
+            usuario = Aluno(nome, cpf, idade, matricula, curso, senha)
+        elif tipo == '2':
+            motivo = input("Digite seu motivo para sua visita: ").strip()
+            usuario = Visitante(nome, cpf, idade, motivo, senha)
+        elif tipo == '3':
+            departamento = input("Digite seu departamento: ").strip()
+            usuario = ChefeDepartamento(nome, cpf, idade, senha, departamento)
+        else:
+            raise TipoUsuarioInvalidoError("Tipo de usuário inválido.")
 
-class Aluno(Pessoa): #herança
-  def __init__(self, nome, cpf, idade, matricula, curso, senha):
-        #person.__init__(self, primeiro, sobrenome, idade)
-    super().__init__(nome, cpf, idade, senha)
-    self.matricula = matricula
-    self.curso = curso
-    def get_matricula(self):
-            return self.matricula
-    def set_matricula(self, matricula):
-            self.matricula =  matricula
-    def get_curso(self):
-            return self.curso
-    def set_curso(self, curso):
-            self.curso =  curso
+        usuarios.append(usuario)
+        print("\nUsuário registrado com sucesso.")
+    except UsuarioJaCadastradoError as e:
+        print(e)
+    except TipoUsuarioInvalidoError as e:
+        print(e)
+    except Exception as e:
+        print(f"Erro inesperado: {e}")
+    finally:
+        print("Processo de registro finalizado.")
 
-  def __str__(self):
-    return super().__str__() + "," + str(self.matricula) + "," + self.curso
+def feedback2():
+    print("\nRegistrar informações\n")
+    try:
+        nota = float(input("Digite a nota (0-10): ").strip())
+        if not (0 <= nota <= 10):
+            raise ValueError("A nota deve estar entre 0 e 10.")
+        feedback = input("Redija sua crítica: ").strip()
+        return nota, feedback
+    except ValueError as e:
+        print(e)
+        return feedback2()
 
-  def exibirAluno(self):
-    print("\nNome:" + self.nome + "\nCPF: " + str(self.cpf) + '\nIdade:' + str(self.idade) + '\nMatricula: ' + str(self.matricula) + "\nCurso: "+ str(self.curso))
+def fazer_feedback(usuario_logado):
+    try:
+        tipo = input("Tipo de review:\n\n1 - Lugar\n2 - Departamento\nEscolha o seu tipo de feedback: ").strip()
 
+        if tipo == '1':
+            local = input("Digite o local: ").strip()
+            nota, feedback = feedback2()
+            review = FeedbackLocal(nota, feedback, local, usuario_logado)
+        elif tipo == '2':
+            departamento = input("Digite o departamento: ").strip()
+            nota, feedback = feedback2()
+            review = FeedbackDepartamento(nota, feedback, departamento, usuario_logado)
+        else:
+            raise TipoUsuarioInvalidoError("Tipo de review inválido.")
 
-class Visitante(Pessoa): #herança
-  def __init__(self, nome, cpf, idade, motivo, senha):
-    super().__init__(nome, cpf, idade, senha)
-    self.motivo = motivo
-    def get_motivo(self):
-            return self.motivo
-    def set_motivo(self, motivo):
-            self.motivo =  motivo
+        reviews.append(review)
+        print("\nFeedback registrado com sucesso.")
+    except TipoUsuarioInvalidoError as e:
+        print(e)
+    except Exception as e:
+        print(f"Erro inesperado: {e}")
+    finally:
+        print("Processo de feedback finalizado.")
 
-  def __str__(self):
-    return super().__str__() + "," + self.motivo
+def fazer_login():
+    try:
+        print("\nFazer login \n")
+        cpf = input("\nDigite seu CPF: ").strip()
+        senha = input("Digite sua senha: ").strip()
 
-  def exibirVisitante(self):
-    print("\nNome:" + self.nome + "\nCPF: " + str(self.cpf) + '\nIdade:' + str(self.idade) + '\nMotivo da vinda: ' + str(self.motivo))
+        for usuario in usuarios:
+            if usuario.cpf == cpf and usuario.senha == senha:
+                print(f"\nBem-vindo, {usuario.nome}!\n")
+                return usuario
 
-class ChefeDepartamento(Pessoa): #herança
-  def __init__(self, nome, cpf, idade, departamento, senha):
-    super().__init__(nome, cpf, idade, senha)
-    self.departamento = departamento
-    def get_departamento(self):
-            return self.departamento
-    def set_departamento(self, departamento):
-            self.departamento =  departamento
+        raise LoginError("CPF ou senha incorretos.")
+    except LoginError as e:
+        print(e)
+    except Exception as e:
+        print(f"Erro inesperado: {e}")
+    finally:
+        print("Processo de login finalizado.")
 
-  def __str__(self):
-    return super().__str__() + "," + self.departamento
+def menu():
+    usuario_logado = None
+    while True:
+        print("\nSistema de Feedback\n")
+        print("1 - Cadastrar")
+        print("2 - Fazer login")
+        print("3 - Feedback")
+        print("4 - Ver feedbacks")
+        print("5 - Sair")
+        opcao = input("\nEscolha uma opção: ").strip()
 
-  def exibirChefeDepartamento(self):
-    print("\nNome:" + self.nome + "\nCPF: " + str(self.cpf) + '\nIdade:' + str(self.idade) + '\nDepartamento: ' + self.departamento)
+        try:
+            if opcao == '1':
+                registrar_usuario()
+            elif opcao == '2':
+                usuario_logado = fazer_login()
+            elif opcao == '3':
+                if usuario_logado:
+                    fazer_feedback(usuario_logado)
+                else:
+                    print("Você precisa estar logado para fazer um feedback.")
+            elif opcao == '4':
+                for review in reviews:
+                    print(review)
+            elif opcao == '5':
+                print("\nSaindo...")
+                break
+            else:
+                print("Opção inválida.")
+        except Exception as e:
+            print(f"Erro inesperado no menu: {e}")
+        finally:
+            print("\nOperação concluída.")
 
-class Feedback(ABC):
-  def __init__ (self, nota, feedback, usuario_logado):
-    self.nota = nota
-    self.feedback = feedback
-    self.usuario_logado = usuario_logado #associação
-    def get_nota(self):
-            return self.nota
-    def set_nota(self, nota):
-            self.nota =  nota
-    def get_feedback(self):
-            return self.feedback
-    def set_feedback(self, feedback):
-            self.feedback = feedback
-    def get_usuario_logado(self):
-            return self.usuario_logado
-    def set_usuario_logado(self, usuario_logado):
-            self.usuario_logado = usuario_logado
-    '''def get_pessoa(self):
-            return self.pessoa
-    def set_pessoa(self, pessoa):
-            self.pessoa = pessoa'''
-
-  def  __str__(self):
-       '''return str(self.feedback) + "," + str(self.usuario_logado.nome)'''
-       return "\nNome: " + str(self.usuario_logado.nome) + "\nFeedback: " + str(self.feedback)
-
-  def exibirFeedback(self):
-    print ("\nNome:" + self.nomePessoa + "\nTipo de review:" + self.tipo + "\nNota (de 1 a 10): " + str(self.nota) + '\nFeedback: ' + self.feedback)
-
-class FeedbackLocal(Feedback): #herança
-  def __init__ (self, nota, feedback, local, usuario_logado):
-    super().__init__(nota, feedback, usuario_logado)
-    self.local = local
-    def get_local(self):
-            return self.local
-    def set_local(self, local):
-            self.local =  local
-
-  def __str__(self):
-    '''return super().__str__() + "," + self.local'''
-    return "\nNome: " + str(self.usuario_logado.nome) + "\nLocal: " + self.local + "\nNota: " + self.nota + "\nFeedback: " + str(self.feedback)
-
-  def exibirLocal(self):
-      print ("\nNome:" + self.usuario_logado + "\nTipo de review: " + self.tipo + "\n\nAlvo da review: " + self.local + "\nNota (de 1 a 10): " + str(self.nota) + '\nFeedback: ' + self.feedback)
-
-class FeedbackDepartamento(Feedback): #herança
-  def __init__ (self, nota, feedback, departamento, usuario_logado):
-    super().__init__(nota, feedback, usuario_logado)
-    self.departamento = departamento
-    def get_departamento(self):
-            return self.departamento
-    def set_departamento(self, departamento):
-            self.departamento =  departamento
-
-  def __str__(self):
-    '''return super().__str__() + "," + self.departamento'''
-    return  "\nNome: " + str(self.usuario_logado.nome) + "\nDepartamento: " + self.departamento + "\nNota: " + self.nota + "\nFeedback: " + str(self.feedback)
-
-  def exibirDepartamento(self):
-    print ("\nNome:" + self.usuario_logado + "\nTipo de review: " + self.tipo + "\n\nAlvo da review: " + self.departamento + "\nNota (de 1 a 10): " + str(self.nota) + '\nFeedback: ' + self.feedback)
+menu()
