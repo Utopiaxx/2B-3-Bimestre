@@ -1,5 +1,14 @@
 #miguel andrade
 #informatica 2 V
+class UsuariojJaCadastradoError(Exception): 
+    pass
+class TipoUsuarioInvalidoError(Exception):
+    pass
+class LoginError(Exception):
+    pass
+from classes import*
+usuarios = []
+reviews = []
 
 def registrar_usuario():
     try:
